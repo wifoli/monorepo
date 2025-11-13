@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  turborepo-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: turborepo-workspace
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/apps/app1/node_modules
+      - /app/apps/app2/node_modules
+      - /app/packages/ui/node_modules
+      - /app/packages/api-client/node_modules
+      - /app/packages/models/node_modules
+      - /app/packages/auth/node_modules
+    ports:
+      - "3000:3000"  # app1
+      - "3001:3001"  # app2
+      - "3002:3002"  # storybook ou outro serviço
+    environment:
+      - NODE_ENV=development
+    command: pnpm dev
+    stdin_open: true
+    tty: true

@@ -1,0 +1,15 @@
+/* Tailwind base */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* PrimeReact Theme */
+@import 'primereact/resources/themes/lara-dark-blue/theme.css';
+@import 'primereact/resources/primereact.min.css';
+@import 'primeicons/primeicons.css';
+
+/* Custom styles */
+:root {
+  --primary-color: #3b82f6;
+  --primary-color-text: #ffffff;
+}
