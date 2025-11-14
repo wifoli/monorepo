@@ -1,0 +1,1902 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guia Completo: Turborepo + Docker + React + PrimeReact + Tailwind</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .nav {
+            background: #f7fafc;
+            padding: 20px;
+            border-bottom: 3px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            background: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: #3182ce;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4);
+        }
+
+        .nav-btn.active {
+            background: #2d3748;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .fase {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .fase.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fase-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .fase-header h2 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .passo {
+            background: #f7fafc;
+            border-left: 5px solid #4299e1;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .passo:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateX(5px);
+        }
+
+        .passo-number {
+            display: inline-block;
+            background: #4299e1;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            font-weight: bold;
+            margin-right: 15px;
+            font-size: 18px;
+        }
+
+        .passo h3 {
+            display: inline-block;
+            color: #2d3748;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+
+        .passo-content {
+            margin-top: 15px;
+            margin-left: 55px;
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #a0aec0;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        .code-block::before {
+            content: '💻 Comando / Código';
+            display: block;
+            color: #4299e1;
+            font-size: 12px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .file-tree {
+            background: #edf2f7;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.8;
+            margin: 15px 0;
+        }
+
+        .file-tree::before {
+            content: '📁 Estrutura de Arquivos';
+            display: block;
+            color: #2d3748;
+            font-size: 12px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .alert {
+            background: #fff5f5;
+            border-left: 5px solid #f56565;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+
+        .alert-success {
+            background: #f0fff4;
+            border-left-color: #48bb78;
+        }
+
+        .alert-info {
+            background: #ebf8ff;
+            border-left-color: #4299e1;
+        }
+
+        .alert strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .checklist {
+            list-style: none;
+            margin: 15px 0;
+        }
+
+        .checklist li {
+            padding: 10px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 6px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .checklist li:before {
+            content: '☐ ';
+            color: #4299e1;
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+
+        .progress-tracker {
+            background: #edf2f7;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .progress-bar {
+            background: #e2e8f0;
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #48bb78, #38a169);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .btn-copy {
+            background: #48bb78;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        .btn-copy:hover {
+            background: #38a169;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: #4299e1;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background: #f7fafc;
+        }
+
+        .footer {
+            background: #2d3748;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Guia Completo: Turborepo com Docker</h1>
+            <p>Monorepo + React + PrimeReact + Tailwind em Ambiente Docker</p>
+        </div>
+
+        <div class="nav">
+            <div class="nav-buttons">
+                <button class="nav-btn active" onclick="showFase(0)">📚 Introdução</button>
+                <button class="nav-btn" onclick="showFase(1)">🐳 Fase 1: Docker Setup</button>
+                <button class="nav-btn" onclick="showFase(2)">🏗️ Fase 2: Estrutura Base</button>
+                <button class="nav-btn" onclick="showFase(3)">🎨 Fase 3: Tailwind Config</button>
+                <button class="nav-btn" onclick="showFase(4)">🧩 Fase 4: Package UI</button>
+                <button class="nav-btn" onclick="showFase(5)">⚛️ Fase 5: App Web</button>
+                <button class="nav-btn" onclick="showFase(6)">⚡ Fase 6: Turborepo</button>
+                <button class="nav-btn" onclick="showFase(7)">✅ Fase 7: Teste Final</button>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- INTRODUÇÃO -->
+            <div class="fase active" id="fase-0">
+                <div class="fase-header">
+                    <h2>📚 Introdução ao Projeto</h2>
+                    <p>Entenda o que vamos construir e por quê</p>
+                </div>
+
+                <div class="passo">
+                    <h3>🎯 Objetivo do Projeto</h3>
+                    <div class="passo-content">
+                        <p>Vamos criar um <strong>monorepo completo</strong> com as seguintes características:</p>
+                        <ul style="margin: 15px 0; margin-left: 20px; line-height: 2;">
+                            <li>✅ <strong>1 aplicação React</strong> (usando Vite)</li>
+                            <li>✅ <strong>1 package de componentes UI</strong> com PrimeReact customizado</li>
+                            <li>✅ <strong>Configuração compartilhada</strong> de Tailwind CSS</li>
+                            <li>✅ <strong>Turborepo</strong> para gerenciar builds e cache</li>
+                            <li>✅ <strong>Tudo rodando em Docker</strong> (sem instalar Node/npm no Ubuntu)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <h3>🏗️ Estrutura Final</h3>
+                    <div class="passo-content">
+                        <div class="file-tree">monorepo-prime/
+├── apps/
+│   └── web/                      # 🌐 Aplicação React principal
+│       ├── src/
+│       │   ├── App.tsx
+│       │   └── main.tsx
+│       ├── package.json
+│       └── vite.config.ts
+│
+├── packages/
+│   ├── ui/                       # 🎨 Biblioteca de componentes
+│   │   ├── src/
+│   │   │   ├── components/
+│   │   │   │   ├── Button.tsx
+│   │   │   │   └── Card.tsx
+│   │   │   ├── styles.css
+│   │   │   └── index.ts
+│   │   └── package.json
+│   │
+│   └── tailwind-config/          # ⚙️ Config compartilhada
+│       ├── base.js
+│       └── package.json
+│
+├── docker-compose.yml            # 🐳 Orquestração Docker
+├── Dockerfile                    # 🐳 Imagem Docker
+├── package.json                  # 📦 Root config
+├── turbo.json                    # ⚡ Turborepo config
+└── pnpm-workspace.yaml           # 🗂️ Workspaces</div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <h3>🔑 Conceitos Importantes</h3>
+                    <div class="passo-content">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Conceito</th>
+                                    <th>O que é?</th>
+                                    <th>Por que usar?</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Monorepo</strong></td>
+                                    <td>Um único repositório com múltiplos projetos</td>
+                                    <td>Compartilhar código, sincronizar versões, refatorar facilmente</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Turborepo</strong></td>
+                                    <td>Build system otimizado para monorepos</td>
+                                    <td>Cache inteligente, builds paralelos, muito mais rápido</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Workspaces</strong></td>
+                                    <td>Sistema para gerenciar múltiplos packages</td>
+                                    <td>Dependências compartilhadas, links locais automáticos</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Docker</strong></td>
+                                    <td>Containers isolados para desenvolvimento</td>
+                                    <td>Ambiente consistente, sem poluir seu sistema</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>PrimeReact</strong></td>
+                                    <td>Biblioteca de componentes UI para React</td>
+                                    <td>Componentes prontos e profissionais</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Tailwind</strong></td>
+                                    <td>Framework CSS utility-first</td>
+                                    <td>Estilização rápida e consistente</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="alert alert-info">
+                    <strong>💡 Dica Importante</strong>
+                    <p>Vamos fazer TUDO passo a passo. Não se preocupe se parecer complexo agora. Cada comando será explicado e você vai entender o motivo de cada coisa que fazemos!</p>
+                </div>
+
+                <div class="passo">
+                    <h3>📋 Pré-requisitos</h3>
+                    <div class="passo-content">
+                        <ul class="checklist">
+                            <li>Ubuntu 24 instalado (você já tem ✅)</li>
+                            <li>Docker instalado no Ubuntu</li>
+                            <li>Docker Compose instalado</li>
+                            <li>Editor de código (VS Code recomendado)</li>
+                            <li>Terminal aberto</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FASE 1: DOCKER SETUP -->
+            <div class="fase" id="fase-1">
+                <div class="fase-header">
+                    <h2>🐳 FASE 1: Configuração do Docker</h2>
+                    <p>Preparar o ambiente Docker para desenvolvimento</p>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">1.1</span>
+                    <h3>Verificar Instalação do Docker</h3>
+                    <div class="passo-content">
+                        <p>Primeiro, vamos confirmar que o Docker está instalado e funcionando:</p>
+                        <div class="code-block">docker --version
+docker compose version</div>
+                        
+                        <div class="alert alert-info">
+                            <strong>📌 O que esperar:</strong>
+                            <p>Você deve ver algo como: "Docker version 24.x.x" e "Docker Compose version v2.x.x"</p>
+                        </div>
+
+                        <div class="alert">
+                            <strong>❌ Se não tiver instalado:</strong>
+                            <p>Execute os comandos abaixo:</p>
+                            <div class="code-block">sudo apt update
+sudo apt install docker.io docker-compose-v2 -y
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo usermod -aG docker $USER</div>
+                            <p>Depois, faça logout e login novamente para aplicar as permissões.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">1.2</span>
+                    <h3>Criar Pasta do Projeto</h3>
+                    <div class="passo-content">
+                        <p>Crie uma pasta para o projeto e entre nela:</p>
+                        <div class="code-block">mkdir -p ~/projetos/monorepo-prime
+cd ~/projetos/monorepo-prime</div>
+                        
+                        <div class="alert alert-success">
+                            <strong>✅ Verificar:</strong>
+                            <p>Execute <code>pwd</code> e confirme que você está em <code>/home/seu-usuario/projetos/monorepo-prime</code></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">1.3</span>
+                    <h3>Criar Dockerfile</h3>
+                    <div class="passo-content">
+                        <p>Vamos criar um Dockerfile para o ambiente de desenvolvimento:</p>
+                        <div class="code-block">cat > Dockerfile << 'EOF'
+FROM node:20-alpine
+
+# Instalar pnpm globalmente
+RUN npm install -g pnpm
+
+# Criar diretório de trabalho
+WORKDIR /app
+
+# Copiar arquivos de dependências
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml* ./
+
+# Instalar dependências
+RUN pnpm install --frozen-lockfile || pnpm install
+
+# Copiar todo o código
+COPY . .
+
+# Expor portas (3000 para app, 3001 para outros serviços)
+EXPOSE 3000 3001
+
+# Comando padrão
+CMD ["pnpm", "dev"]
+EOF</div>
+
+                        <div class="alert alert-info">
+                            <strong>📖 Explicação do Dockerfile:</strong>
+                            <ul style="margin: 10px 0; margin-left: 20px;">
+                                <li><code>FROM node:20-alpine</code> - Usa Node.js 20 em imagem leve</li>
+                                <li><code>RUN npm install -g pnpm</code> - Instala o gerenciador pnpm</li>
+                                <li><code>WORKDIR /app</code> - Define pasta de trabalho no container</li>
+                                <li><code>EXPOSE 3000</code> - Disponibiliza porta para acessar o app</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">1.4</span>
+                    <h3>Criar docker-compose.yml</h3>
+                    <div class="passo-content">
+                        <p>Agora vamos criar o arquivo de orquestração:</p>
+                        <div class="code-block">cat > docker-compose.yml << 'EOF'
+version: '3.8'
+
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: monorepo-dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/apps/web/node_modules
+      - /app/packages/ui/node_modules
+      - /app/packages/tailwind-config/node_modules
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+    command: pnpm dev
+    stdin_open: true
+    tty: true
+EOF</div>
+
+                        <div class="alert alert-info">
+                            <strong>📖 Explicação do docker-compose.yml:</strong>
+                            <ul style="margin: 10px 0; margin-left: 20px;">
+                                <li><code>volumes</code> - Sincroniza código do host com container</li>
+                                <li><code>/app/node_modules</code> - Usa node_modules do container, não do host</li>
+                                <li><code>ports</code> - Mapeia portas do container para host</li>
+                                <li><code>stdin_open/tty</code> - Permite interagir com o container</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">1.5</span>
+                    <h3>Criar .dockerignore</h3>
+                    <div class="passo-content">
+                        <p>Evitar copiar arquivos desnecessários para o container:</p>
+                        <div class="code-block">cat > .dockerignore << 'EOF'
+node_modules
+dist
+.next
+.turbo
+.git
+.gitignore
+README.md
+.env
+.env.local
+EOF</div>
+                    </div>
+                </div>
+
+                <div class="alert alert-success">
+                    <strong>🎉 Fase 1 Completa!</strong>
+                    <p>Ambiente Docker configurado. Arquivos criados:</p>
+                    <ul style="margin: 10px 0; margin-left: 20px;">
+                        <li>✅ Dockerfile</li>
+                        <li>✅ docker-compose.yml</li>
+                        <li>✅ .dockerignore</li>
+                    </ul>
+                    <p><strong>Próximo:</strong> Clique em "Fase 2" para criar a estrutura base do monorepo!</p>
+                </div>
+            </div>
+
+            <!-- FASE 2: ESTRUTURA BASE -->
+            <div class="fase" id="fase-2">
+                <div class="fase-header">
+                    <h2>🏗️ FASE 2: Estrutura Base do Monorepo</h2>
+                    <p>Criar a estrutura de pastas e arquivos fundamentais</p>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">2.1</span>
+                    <h3>Criar Estrutura de Diretórios</h3>
+                    <div class="passo-content">
+                        <p>Vamos criar todas as pastas necessárias de uma vez:</p>
+                        <div class="code-block">mkdir -p apps/web/src
+mkdir -p packages/ui/src/components
+mkdir -p packages/tailwind-config</div>
+                        
+                        <div class="alert alert-success">
+                            <strong>✅ Verificar:</strong>
+                            <p>Execute <code>tree -L 3</code> ou <code>ls -R</code> para ver a estrutura criada</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">2.2</span>
+                    <h3>Criar package.json Root</h3>
+                    <div class="passo-content">
+                        <p>Este é o arquivo principal que gerencia todo o monorepo:</p>
+                        <div class="code-block">cat > package.json << 'EOF'
+{
+  "name": "monorepo-prime",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "clean": "turbo run clean"
+  },
+  "devDependencies": {
+    "turbo": "^2.2.3"
+  },
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=20"
+  }
+}
+EOF</div>
+
+                        <div class="alert alert-info">
+                            <strong>📖 Pontos Importantes:</strong>
+                            <ul style="margin: 10px 0; margin-left: 20px;">
+                                <li><code>"private": true</code> - Impede publicação acidental no npm</li>
+                                <li><code>scripts</code> - Comandos que rodam via Turborepo</li>
+                                <li><code>turbo run dev</code> - Executa "dev" em todos os packages</li>
+                                <li><code>packageManager</code> - Define versão do pnpm</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">2.3</span>
+                    <h3>Criar pnpm-workspace.yaml</h3>
+                    <div class="passo-content">
+                        <p>Define quais pastas fazem parte do workspace:</p>
+                        <div class="code-block">cat > pnpm-workspace.yaml << 'EOF'
+packages:
+  - "apps/*"
+  - "packages/*"
+EOF</div>
+
+                        <div class="alert alert-info">
+                            <strong>📖 O que isso faz:</strong>
+                            <p>Informa ao pnpm que <code>apps/*</code> e <code>packages/*</code> são workspaces separados. Isso permite que eles compartilhem dependências e se referenciem mutuamente.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">2.4</span>
+                    <h3>Criar turbo.json</h3>
+                    <div class="passo-content">
+                        <p>Configuração do Turborepo - o cérebro do monorepo:</p>
+                        <div class="code-block">cat > turbo.json << 'EOF'
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["**/.env.*local"],
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**", "build/**"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {
+      "dependsOn": ["^lint"]
+    },
+    "clean": {
+      "cache": false
+    }
+  }
+}
+EOF</div>
+
+                        <div class="alert alert-info">
+                            <strong>📖 Entendendo o Pipeline:</strong>
+                            <ul style="margin: 10px 0; margin-left: 20px;">
+                                <li><code>build</code> - Compila o código. <code>^build</code> = "build das dependências primeiro"</li>
+                                <li><code>outputs</code> - Pastas que o Turborepo deve cachear</li>
+                                <li><code>dev</code> - Modo desenvolvimento. <code>cache: false</code> = não cachear</li>
+                                <li><code>persistent: true</code> - Mantém o processo rodando</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">2.5</span>
+                    <h3>Criar .gitignore</h3>
+                    <div class="passo-content">
+                        <p>Arquivos que não devem ir para o Git:</p>
+                        <div class="code-block">cat > .gitignore << 'EOF'
+# Dependencies
+node_modules
+.pnp
+.pnp.js
+
+# Testing
+coverage
+
+# Production
+dist
+build
+.next
+
+# Turborepo
+.turbo
+
+# Misc
+.DS_Store
+*.pem
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+EOF</div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">2.6</span>
+                    <h3>Criar tsconfig.json Base</h3>
+                    <div class="passo-content">
+                        <p>Configuração TypeScript compartilhada:</p>
+                        <div class="code-block">cat > tsconfig.json << 'EOF'
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
+  }
+}
+EOF</div>
+                    </div>
+                </div>
+
+                <div class="alert alert-success">
+                    <strong>🎉 Fase 2 Completa!</strong>
+                    <p>Estrutura base criada com sucesso! Arquivos raiz:</p>
+                    <ul style="margin: 10px 0; margin-left: 20px;">
+                        <li>✅ package.json</li>
+                        <li>✅ pnpm-workspace.yaml</li>
+                        <li>✅ turbo.json</li>
+                        <li>✅ tsconfig.json</li>
+                        <li>✅ .gitignore</li>
+                    </ul>
+                    <p><strong>Próximo:</strong> Fase 3 - Configurar Tailwind CSS compartilhado!</p>
+                </div>
+            </div>
+
+            <!-- FASE 3: TAILWIND CONFIG -->
+            <div class="fase" id="fase-3">
+                <div class="fase-header">
+                    <h2>🎨 FASE 3: Package Tailwind Config</h2>
+                    <p>Configuração compartilhada do Tailwind CSS com preset do PrimeReact</p>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">3.1</span>
+                    <h3>Criar package.json do tailwind-config</h3>
+                    <div class="passo-content">
+                        <div class="code-block">cat > packages/tailwind-config/package.json << 'EOF'
+{
+  "name": "@monorepo/tailwind-config",
+  "version": "1.0.0",
+  "private": true,
+  "main": "base.js",
+  "dependencies": {
+    "tailwindcss": "^3.4.1",
+    "tailwindcss-primeui": "^0.3.4"
+  }
+}
+EOF</div>
+
+                        <div class="alert alert-info">
+                            <strong>📖 Sobre este package:</strong>
+                            <ul style="margin: 10px 0; margin-left: 20px;">
+                                <li><code>@monorepo/</code> - Namespace interno do monorepo</li>
+                                <li><code>main: "base.js"</code> - Arquivo exportado quando importado</li>
+                                <li><code>tailwindcss-primeui</code> - Plugin oficial PrimeReact + Tailwind</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">3.2</span>
+                    <h3>Criar base.js - Configuração Base</h3>
+                    <div class="passo-content">
+                        <p>Este arquivo será importado pelos outros packages:</p>
+                        <div class="code-block">cat > packages/tailwind-config/base.js << 'EOF'
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    // Adicionar depois pelos packages que usarem
+  ],
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        // Cores customizadas do seu projeto
+        primary: {
+          50: '#f0f9ff',
+          100: '#e0f2fe',
+          200: '#bae6fd',
+          300: '#7dd3fc',
+          400: '#38bdf8',
+          500: '#0ea5e9',
+          600: '#0284c7',
+          700: '#0369a1',
+          800: '#075985',
+          900: '#0c4a6e',
+          950: '#082f49',
+        },
+      },
+    },
+  },
+  plugins: [
+    require('tailwindcss-primeui')
+  ],
+}
+EOF</div>
+
+                        <div class="alert alert-info">
+                            <strong>📖 Entendendo a config:</strong>
+                            <ul style="margin: 10px 0; margin-left: 20px;">
+                                <li><code>content</code> - Vazio aqui, será preenchido em cada package</li>
+                                <li><code>darkMode: 'class'</code> - Ativa dark mode via classe CSS</li>
+                                <li><code>theme.extend</code> - Adiciona cores personalizadas</li>
+                                <li><code>plugins</code> - Inclui o preset do PrimeReact</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-success">
+                    <strong>🎉 Fase 3 Completa!</strong>
+                    <p>Package de configuração Tailwind criado! Este package será usado por:</p>
+                    <ul style="margin: 10px 0; margin-left: 20px;">
+                        <li>📦 Package UI (componentes)</li>
+                        <li>🌐 App Web</li>
+                        <li>🔮 Qualquer outro app/package futuro</li>
+                    </ul>
+                    <p><strong>Próximo:</strong> Fase 4 - Criar o package de componentes UI!</p>
+                </div>
+            </div>
+
+            <!-- FASE 4: PACKAGE UI -->
+            <div class="fase" id="fase-4">
+                <div class="fase-header">
+                    <h2>🧩 FASE 4: Package UI - Componentes Compartilhados</h2>
+                    <p>Criar biblioteca de componentes PrimeReact customizados</p>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">4.1</span>
+                    <h3>Criar package.json do UI</h3>
+                    <div class="passo-content">
+                        <div class="code-block">cat > packages/ui/package.json << 'EOF'
+{
+  "name": "@monorepo/ui",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "tsc && vite build",
+    "lint": "eslint . --ext ts,tsx"
+  },
+  "dependencies": {
+    "primereact": "^10.8.3",
+    "primeicons": "^7.0.0"
+  },
+  "devDependencies": {
+    "@monorepo/tailwind-config": "workspace:*",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.3",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11",
+    "vite-plugin-dts": "^4.3.0"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  }
+}
+EOF</div>
+
+                        <div class="alert alert-info">
+                            <strong>📖 Pontos Importantes:</strong>
+                            <ul style="margin: 10px 0; margin-left: 20px;">
+                                <li><code>exports</code> - Define o que pode ser importado deste package</li>
+                                <li><code>workspace:*</code> - Referencia package local do monorepo</li>
+                                <li><code>peerDependencies</code> - React será fornecido pelo app que usar</li>
+                                <li><code>vite-plugin-dts</code> - Gera arquivos de tipos TypeScript</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">4.2</span>
+                    <h3>Criar vite.config.ts do UI</h3>
+                    <div class="passo-content">
+                        <div class="code-block">cat > packages/ui/vite.config.ts << 'EOF'
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import dts from 'vite-plugin-dts'
+import { resolve } from 'path'
+
+export default defineConfig({
+  plugins: [
+    react(),
+    dts({
+      insertTypesEntry: true,
+    }),
+  ],
+  build: {
+    lib: {
+      entry: resolve(__dirname, 'src/index.ts'),
+      name: 'MonorepoUI',
+      formats: ['es'],
+      fileName: 'index',
+    },
+    rollupOptions: {
+      external: ['react', 'react-dom', 'react/jsx-runtime'],
+      output: {
+        globals: {
+          react: 'React',
+          'react-dom': 'ReactDOM',
+        },
+      },
+    },
+  },
+})
+EOF</div>
+
+                        <div class="alert alert-info">
+                            <strong>📖 Configuração de Library:</strong>
+                            <ul style="margin: 10px 0; margin-left: 20px;">
+                                <li><code>build.lib</code> - Indica que estamos buildando uma biblioteca</li>
+                                <li><code>external</code> - React não será bundado (vem do app)</li>
+                                <li><code>dts</code> - Gera definições TypeScript automaticamente</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">4.3</span>
+                    <h3>Criar tailwind.config.ts do UI</h3>
+                    <div class="passo-content">
+                        <div class="code-block">cat > packages/ui/tailwind.config.ts << 'EOF'
+import type { Config } from 'tailwindcss'
+import baseConfig from '@monorepo/tailwind-config/base'
+
+export default {
+  ...baseConfig,
+  content: [
+    './src/**/*.{js,ts,jsx,tsx}',
+  ],
+} satisfies Config
+EOF</div>
+
+                        <div class="alert alert-info">
+                            <strong>🔗 Importando Config Compartilhada:</strong>
+                            <p>Aqui pegamos a config base do <code>tailwind-config</code> e apenas adicionamos o <code>content</code> específico deste package.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">4.4</span>
+                    <h3>Criar postcss.config.js do UI</h3>
+                    <div class="passo-content">
+                        <div class="code-block">cat > packages/ui/postcss.config.js << 'EOF'
+export default {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+EOF</div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">4.5</span>
+                    <h3>Criar tsconfig.json do UI</h3>
+                    <div class="passo-content">
+                        <div class="code-block">cat > packages/ui/tsconfig.json << 'EOF'
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "declaration": true,
+    "declarationMap": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}
+EOF</div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">4.6</span>
+                    <h3>Criar styles.css do UI</h3>
+                    <div class="passo-content">
+                        <p>CSS principal com Tailwind e estilos do PrimeReact:</p>
+                        <div class="code-block">cat > packages/ui/src/styles.css << 'EOF'
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Importar tema do PrimeReact */
+@import 'primereact/resources/themes/lara-light-blue/theme.css';
+@import 'primereact/resources/primereact.min.css';
+@import 'primeicons/primeicons.css';
+
+/* Estilos customizados globais */
+@layer components {
+  .custom-button {
+    @apply px-4 py-2 rounded-lg font-semibold transition-all;
+  }
+  
+  .custom-card {
+    @apply bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6;
+  }
+}
+EOF</div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">4.7</span>
+                    <h3>Criar Componente Button.tsx</h3>
+                    <div class="passo-content">
+                        <p>Primeiro componente: Button customizado do PrimeReact:</p>
+                        <div class="code-block">cat > packages/ui/src/components/Button.tsx << 'EOF'
+import { Button as PrimeButton, ButtonProps } from 'primereact/button'
+import { classNames } from 'primereact/utils'
+
+interface CustomButtonProps extends ButtonProps {
+  variant?: 'primary' | 'secondary' | 'success' | 'danger'
+}
+
+export function Button({ variant = 'primary', className, ...props }: CustomButtonProps) {
+  const variantClasses = {
+    primary: 'bg-primary-600 hover:bg-primary-700 text-white',
+    secondary: 'bg-gray-600 hover:bg-gray-700 text-white',
+    success: 'bg-green-600 hover:bg-green-700 text-white',
+    danger: 'bg-red-600 hover:bg-red-700 text-white',
+  }
+
+  return (
+    <PrimeButton
+      className={classNames(
+        'custom-button',
+        variantClasses[variant],
+        className
+      )}
+      {...props}
+    />
+  )
+}
+EOF</div>
+
+                        <div class="alert alert-info">
+                            <strong>🎨 Customização:</strong>
+                            <p>Estamos estendendo o Button do PrimeReact e adicionando nossas próprias variantes com Tailwind!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">4.8</span>
+                    <h3>Criar Componente Card.tsx</h3>
+                    <div class="passo-content">
+                        <div class="code-block">cat > packages/ui/src/components/Card.tsx << 'EOF'
+import { Card as PrimeCard, CardProps } from 'primereact/card'
+import { classNames } from 'primereact/utils'
+
+interface CustomCardProps extends CardProps {
+  elevated?: boolean
+}
+
+export function Card({ elevated = false, className, ...props }: CustomCardProps) {
+  return (
+    <PrimeCard
+      className={classNames(
+        'custom-card',
+        elevated && 'shadow-2xl',
+        className
+      )}
+      {...props}
+    />
+  )
+}
+EOF</div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">4.9</span>
+                    <h3>Criar index.ts - Exportar Componentes</h3>
+                    <div class="passo-content">
+                        <p>Arquivo que exporta todos os componentes:</p>
+                        <div class="code-block">cat > packages/ui/src/index.ts << 'EOF'
+export { Button } from './components/Button'
+export { Card } from './components/Card'
+
+// Re-exportar tipos úteis
+export type { ButtonProps } from 'primereact/button'
+export type { CardProps } from 'primereact/card'
+EOF</div>
+                    </div>
+                </div>
+
+                <div class="alert alert-success">
+                    <strong>🎉 Fase 4 Completa!</strong>
+                    <p>Package UI criado com sucesso! Componentes disponíveis:</p>
+                    <ul style="margin: 10px 0; margin-left: 20px;">
+                        <li>✅ Button customizado com variantes</li>
+                        <li>✅ Card customizado com elevação</li>
+                        <li>✅ Estilos Tailwind + PrimeReact integrados</li>
+                        <li>✅ Build configurado com Vite</li>
+                    </ul>
+                    <p><strong>Próximo:</strong> Fase 5 - Criar o App Web que vai usar esses componentes!</p>
+                </div>
+            </div>
+
+            <!-- FASE 5: APP WEB -->
+            <div class="fase" id="fase-5">
+                <div class="fase-header">
+                    <h2>⚛️ FASE 5: App Web - Aplicação React</h2>
+                    <p>Criar aplicação React que consome o package UI</p>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">5.1</span>
+                    <h3>Criar package.json do App</h3>
+                    <div class="passo-content">
+                        <div class="code-block">cat > apps/web/package.json << 'EOF'
+{
+  "name": "web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext ts,tsx"
+  },
+  "dependencies": {
+    "@monorepo/ui": "workspace:*",
+    "primereact": "^10.8.3",
+    "primeicons": "^7.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@monorepo/tailwind-config": "workspace:*",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.3",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11"
+  }
+}
+EOF</div>
+
+                        <div class="alert alert-info">
+                            <strong>📦 Dependências Importantes:</strong>
+                            <ul style="margin: 10px 0; margin-left: 20px;">
+                                <li><code>@monorepo/ui</code> - Nossa biblioteca de componentes!</li>
+                                <li><code>@monorepo/tailwind-config</code> - Config compartilhada</li>
+                                <li><code>workspace:*</code> - Referencia local do monorepo</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">5.2</span>
+                    <h3>Criar vite.config.ts do App</h3>
+                    <div class="passo-content">
+                        <div class="code-block">cat > apps/web/vite.config.ts << 'EOF'
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    host: '0.0.0.0',
+    port: 3000,
+    watch: {
+      usePolling: true,
+    },
+  },
+})
+EOF</div>
+
+                        <div class="alert alert-info">
+                            <strong>🐳 Configuração para Docker:</strong>
+                            <ul style="margin: 10px 0; margin-left: 20px;">
+                                <li><code>host: '0.0.0.0'</code> - Permite acesso externo ao container</li>
+                                <li><code>usePolling: true</code> - Hot reload funciona no Docker</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">5.3</span>
+                    <h3>Criar tailwind.config.ts do App</h3>
+                    <div class="passo-content">
+                        <div class="code-block">cat > apps/web/tailwind.config.ts << 'EOF'
+import type { Config } from 'tailwindcss'
+import baseConfig from '@monorepo/tailwind-config/base'
+
+export default {
+  ...baseConfig,
+  content: [
+    './index.html',
+    './src/**/*.{js,ts,jsx,tsx}',
+    '../../packages/ui/src/**/*.{js,ts,jsx,tsx}',
+  ],
+} satisfies Config
+EOF</div>
+
+                        <div class="alert alert-info">
+                            <strong>📂 Content Paths:</strong>
+                            <p>Note que incluímos <code>../../packages/ui/src/**</code> para o Tailwind processar as classes usadas nos componentes do package UI!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">5.4</span>
+                    <h3>Criar postcss.config.js do App</h3>
+                    <div class="passo-content">
+                        <div class="code-block">cat > apps/web/postcss.config.js << 'EOF'
+export default {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+EOF</div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">5.5</span>
+                    <h3>Criar tsconfig.json do App</h3>
+                    <div class="passo-content">
+                        <div class="code-block">cat > apps/web/tsconfig.json << 'EOF'
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}
+EOF</div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">5.6</span>
+                    <h3>Criar tsconfig.node.json</h3>
+                    <div class="passo-content">
+                        <div class="code-block">cat > apps/web/tsconfig.node.json << 'EOF'
+{
+  "compilerOptions": {
+    "composite": true,
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["vite.config.ts"]
+}
+EOF</div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">5.7</span>
+                    <h3>Criar index.html</h3>
+                    <div class="passo-content">
+                        <div class="code-block">cat > apps/web/index.html << 'EOF'
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Monorepo Prime - App Web</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+EOF</div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">5.8</span>
+                    <h3>Criar src/main.tsx</h3>
+                    <div class="passo-content">
+                        <p>Entry point da aplicação:</p>
+                        <div class="code-block">cat > apps/web/src/main.tsx << 'EOF'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App'
+import './index.css'
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+)
+EOF</div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">5.9</span>
+                    <h3>Criar src/index.css</h3>
+                    <div class="passo-content">
+                        <div class="code-block">cat > apps/web/src/index.css << 'EOF'
+@import '@monorepo/ui/styles.css';
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+}
+EOF</div>
+
+                        <div class="alert alert-info">
+                            <strong>🎨 Importando Estilos do Package UI:</strong>
+                            <p>Com <code>@import '@monorepo/ui/styles.css'</code> trazemos todos os estilos do Tailwind e PrimeReact!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">5.10</span>
+                    <h3>Criar src/App.tsx - Componente Principal</h3>
+                    <div class="passo-content">
+                        <p>Agora vamos usar nossos componentes customizados:</p>
+                        <div class="code-block">cat > apps/web/src/App.tsx << 'EOF'
+import { Button, Card } from '@monorepo/ui'
+import { useState } from 'react'
+
+function App() {
+  const [count, setCount] = useState(0)
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100 dark:from-gray-900 dark:to-gray-800 p-8">
+      <div className="max-w-4xl mx-auto space-y-8">
+        {/* Header */}
+        <div className="text-center">
+          <h1 className="text-5xl font-bold text-primary-900 dark:text-white mb-4">
+            🚀 Monorepo Prime
+          </h1>
+          <p className="text-xl text-gray-700 dark:text-gray-300">
+            React + PrimeReact + Tailwind + Turborepo
+          </p>
+        </div>
+
+        {/* Card de Demonstração */}
+        <Card 
+          elevated 
+          title="Componente Card Customizado"
+          subTitle="Do package @monorepo/ui"
+        >
+          <div className="space-y-4">
+            <p className="text-gray-700 dark:text-gray-300">
+              Este Card é um componente do PrimeReact customizado com Tailwind CSS,
+              criado no package <code className="bg-primary-100 dark:bg-gray-700 px-2 py-1 rounded">@monorepo/ui</code>.
+            </p>
+            
+            <div className="flex items-center gap-4">
+              <span className="text-2xl font-bold text-primary-600 dark:text-primary-400">
+                Contador: {count}
+              </span>
+            </div>
+
+            <div className="flex gap-3 flex-wrap">
+              <Button 
+                variant="primary" 
+                label="Incrementar" 
+                icon="pi pi-plus"
+                onClick={() => setCount(count + 1)}
+              />
+              <Button 
+                variant="danger" 
+                label="Decrementar" 
+                icon="pi pi-minus"
+                onClick={() => setCount(count - 1)}
+              />
+              <Button 
+                variant="secondary" 
+                label="Resetar" 
+                icon="pi pi-refresh"
+                onClick={() => setCount(0)}
+              />
+            </div>
+          </div>
+        </Card>
+
+        {/* Card de Informações */}
+        <Card title="✨ Recursos do Projeto">
+          <ul className="space-y-3 text-gray-700 dark:text-gray-300">
+            <li className="flex items-start gap-2">
+              <span className="text-green-500">✓</span>
+              <span><strong>Monorepo:</strong> Múltiplos packages em um repositório</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-green-500">✓</span>
+              <span><strong>Turborepo:</strong> Build system otimizado com cache</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-green-500">✓</span>
+              <span><strong>Tailwind CSS:</strong> Configuração compartilhada entre packages</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-green-500">✓</span>
+              <span><strong>PrimeReact:</strong> Componentes UI profissionais</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-green-500">✓</span>
+              <span><strong>Docker:</strong> Ambiente isolado e consistente</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-green-500">✓</span>
+              <span><strong>TypeScript:</strong> Type-safe em todo o projeto</span>
+            </li>
+          </ul>
+        </Card>
+
+        {/* Footer */}
+        <div className="text-center text-gray-600 dark:text-gray-400">
+          <p>Desenvolvido com ❤️ usando tecnologias modernas</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default App
+EOF</div>
+
+                        <div class="alert alert-success">
+                            <strong>🎨 App Criado!</strong>
+                            <p>O App está usando os componentes Button e Card do package @monorepo/ui com todas as customizações!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-success">
+                    <strong>🎉 Fase 5 Completa!</strong>
+                    <p>App Web criado e configurado! Recursos inclusos:</p>
+                    <ul style="margin: 10px 0; margin-left: 20px;">
+                        <li>✅ Vite configurado com React</li>
+                        <li>✅ Tailwind CSS integrado</li>
+                        <li>✅ Componentes do @monorepo/ui sendo usados</li>
+                        <li>✅ Interface exemplo funcional</li>
+                    </ul>
+                    <p><strong>Próximo:</strong> Fase 6 - Finalizar configuração do Turborepo!</p>
+                </div>
+            </div>
+
+            <!-- FASE 6: TURBOREPO FINAL -->
+            <div class="fase" id="fase-6">
+                <div class="fase-header">
+                    <h2>⚡ FASE 6: Configuração Final do Turborepo</h2>
+                    <p>Ajustes finais e preparar para rodar o projeto</p>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">6.1</span>
+                    <h3>Verificar Estrutura Completa</h3>
+                    <div class="passo-content">
+                        <p>Execute para ver toda a estrutura criada:</p>
+                        <div class="code-block">tree -L 3 -I 'node_modules'</div>
+                        
+                        <div class="alert alert-info">
+                            <strong>📂 Estrutura Esperada:</strong>
+                            <div class="file-tree">monorepo-prime/
+├── apps/
+│   └── web/
+│       ├── src/
+│       ├── index.html
+│       ├── package.json
+│       ├── vite.config.ts
+│       ├── tailwind.config.ts
+│       └── tsconfig.json
+├── packages/
+│   ├── ui/
+│   │   ├── src/
+│   │   ├── package.json
+│   │   └── vite.config.ts
+│   └── tailwind-config/
+│       ├── base.js
+│       └── package.json
+├── docker-compose.yml
+├── Dockerfile
+├── package.json
+├── turbo.json
+└── pnpm-workspace.yaml</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">6.2</span>
+                    <h3>Instalar Dependências</h3>
+                    <div class="passo-content">
+                        <p>Agora vamos instalar tudo via Docker:</p>
+                        <div class="code-block">docker compose run --rm dev pnpm install</div>
+                        
+                        <div class="alert alert-info">
+                            <strong>⏱️ Tempo esperado:</strong>
+                            <p>Este comando pode levar de 2 a 5 minutos na primeira vez. O Docker vai:</p>
+                            <ul style="margin: 10px 0; margin-left: 20px;">
+                                <li>1. Baixar a imagem Node.js</li>
+                                <li>2. Buildar o Dockerfile</li>
+                                <li>3. Instalar todas as dependências com pnpm</li>
+                            </ul>
+                        </div>
+
+                        <div class="alert alert-success">
+                            <strong>✅ Sucesso:</strong>
+                            <p>Se tudo correr bem, você verá mensagens sobre packages instalados e links criados entre workspaces.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">6.3</span>
+                    <h3>Build Inicial do Package UI</h3>
+                    <div class="passo-content">
+                        <p>Precisamos fazer build do package UI antes de usar no app:</p>
+                        <div class="code-block">docker compose run --rm dev pnpm turbo build --filter=@monorepo/ui</div>
+                        
+                        <div class="alert alert-info">
+                            <strong>🔨 O que acontece:</strong>
+                            <p>O Turborepo vai compilar o package UI e criar a pasta <code>dist/</code> com os componentes prontos para uso.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-success">
+                    <strong>🎉 Fase 6 Completa!</strong>
+                    <p>Turborepo configurado e dependências instaladas! Agora vamos testar tudo!</p>
+                    <p><strong>Próximo:</strong> Fase 7 - Rodar e testar o projeto completo!</p>
+                </div>
+            </div>
+
+            <!-- FASE 7: TESTE FINAL -->
+            <div class="fase" id="fase-7">
+                <div class="fase-header">
+                    <h2>✅ FASE 7: Teste e Execução do Projeto</h2>
+                    <p>Momento da verdade - rodar e validar tudo!</p>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">7.1</span>
+                    <h3>Iniciar Modo Desenvolvimento</h3>
+                    <div class="passo-content">
+                        <p>Agora vamos rodar o projeto completo:</p>
+                        <div class="code-block">docker compose up</div>
+                        
+                        <div class="alert alert-info">
+                            <strong>📺 O que você vai ver:</strong>
+                            <p>O Turborepo vai iniciar o modo dev de todos os packages simultaneamente. Você verá logs como:</p>
+                            <ul style="margin: 10px 0; margin-left: 20px;">
+                                <li><code>@monorepo/ui:dev: watching for file changes...</code></li>
+                                <li><code>web:dev: VITE ready in XXX ms</code></li>
+                                <li><code>web:dev: Local: http://localhost:3000</code></li>
+                            </ul>
+                        </div>
+
+                        <div class="alert alert-success">
+                            <strong>🌐 Acessar o App:</strong>
+                            <p>Abra seu navegador em: <strong>http://localhost:3000</strong></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">7.2</span>
+                    <h3>Testar Hot Reload</h3>
+                    <div class="passo-content">
+                        <p>Vamos testar se as mudanças são refletidas automaticamente:</p>
+                        
+                        <div class="alert alert-info">
+                            <strong>🧪 Teste 1: Modificar App</strong>
+                            <p>Abra <code>apps/web/src/App.tsx</code> e mude o título. Salve e veja o browser atualizar automaticamente!</p>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <strong>🧪 Teste 2: Modificar Componente UI</strong>
+                            <p>Abra <code>packages/ui/src/components/Button.tsx</code>, mude uma classe Tailwind. O Vite vai recompilar e o app vai atualizar!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">7.3</span>
+                    <h3>Testar Build de Produção</h3>
+                    <div class="passo-content">
+                        <p>Parar o servidor (Ctrl+C) e testar o build:</p>
+                        <div class="code-block">docker compose run --rm dev pnpm build</div>
+                        
+                        <div class="alert alert-success">
+                            <strong>✅ Sucesso:</strong>
+                            <p>Turborepo vai buildar na ordem correta:</p>
+                            <ol style="margin: 10px 0; margin-left: 20px;">
+                                <li>tailwind-config (não tem build)</li>
+                                <li>@monorepo/ui (gera dist/)</li>
+                                <li>web (usa o UI já buildado)</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">7.4</span>
+                    <h3>Testar Cache do Turborepo</h3>
+                    <div class="passo-content">
+                        <p>Rode o build novamente:</p>
+                        <div class="code-block">docker compose run --rm dev pnpm build</div>
+                        
+                        <div class="alert alert-success">
+                            <strong>⚡ Cache em Ação!</strong>
+                            <p>Você verá <code>>>> FULL TURBO</code> indicando que o Turborepo usou cache. O build será instantâneo!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">7.5</span>
+                    <h3>Comandos Úteis</h3>
+                    <div class="passo-content">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Comando</th>
+                                    <th>Descrição</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>docker compose up</code></td>
+                                    <td>Iniciar modo desenvolvimento</td>
+                                </tr>
+                                <tr>
+                                    <td><code>docker compose up -d</code></td>
+                                    <td>Iniciar em background (detached)</td>
+                                </tr>
+                                <tr>
+                                    <td><code>docker compose down</code></td>
+                                    <td>Parar e remover containers</td>
+                                </tr>
+                                <tr>
+                                    <td><code>docker compose logs -f</code></td>
+                                    <td>Ver logs em tempo real</td>
+                                </tr>
+                                <tr>
+                                    <td><code>docker compose exec dev sh</code></td>
+                                    <td>Entrar no container (terminal)</td>
+                                </tr>
+                                <tr>
+                                    <td><code>docker compose run --rm dev pnpm [comando]</code></td>
+                                    <td>Executar comando pnpm no container</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="passo">
+                    <span class="passo-number">7.6</span>
+                    <h3>Adicionar Novo Componente (Exemplo)</h3>
+                    <div class="passo-content">
+                        <p>Para adicionar um novo componente ao package UI:</p>
+                        
+                        <div class="code-block"># 1. Criar arquivo do componente
+cat > packages/ui/src/components/Alert.tsx << 'EOF'
+import { Message, MessageProps } from 'primereact/message'
+
+export function Alert(props: MessageProps) {
+  return <Message {...props} />
+}
+EOF
+
+# 2. Exportar no index.ts
+echo "export { Alert } from './components/Alert'" >> packages/ui/src/index.ts
+
+# 3. Usar no App
+# Adicionar import em apps/web/src/App.tsx:
+# import { Alert } from '@monorepo/ui'</div>
+                    </div>
+                </div>
+
+                <div class="alert alert-success">
+                    <strong>🎉🎉🎉 PROJETO COMPLETO!</strong>
+                    <p>Parabéns! Você criou um monorepo completo com:</p>
+                    <ul style="margin: 10px 0; margin-left: 20px;">
+                        <li>✅ Turborepo configurado e funcionando</li>
+                        <li>✅ Package de componentes UI customizados</li>
+                        <li>✅ App React consumindo o package</li>
+                        <li>✅ Tailwind CSS compartilhado</li>
+                        <li>✅ PrimeReact integrado</li>
+                        <li>✅ Tudo rodando em Docker</li>
+                        <li>✅ Hot reload funcionando</li>
+                        <li>✅ Cache do Turborepo ativo</li>
+                    </ul>
+                </div>
+
+                <div class="passo">
+                    <h3>📚 Próximos Passos (Opcional)</h3>
+                    <div class="passo-content">
+                        <ul style="margin: 15px 0; margin-left: 20px; line-height: 2;">
+                            <li>📦 Adicionar mais componentes ao package UI</li>
+                            <li>🌐 Criar mais apps (admin, mobile, etc)</li>
+                            <li>🧪 Adicionar testes (Jest, Vitest)</li>
+                            <li>📝 Adicionar ESLint e Prettier compartilhados</li>
+                            <li>🔄 Configurar CI/CD (GitHub Actions)</li>
+                            <li>🚀 Deploy (Vercel, Netlify, etc)</li>
+                            <li>📖 Adicionar Storybook para documentar componentes</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer">
+            <p>🚀 Guia Turborepo + Docker | Criado para você aprender passo a passo</p>
+            <p style="margin-top: 10px; font-size: 14px; opacity: 0.8;">
+                Navegue pelas fases no menu superior | Copie os comandos e execute no seu terminal
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function showFase(index) {
+            // Esconder todas as fases
+            const fases = document.querySelectorAll('.fase');
+            fases.forEach(fase => fase.classList.remove('active'));
+            
+            // Remover active dos botões
+            const buttons = document.querySelectorAll('.nav-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            // Mostrar fase selecionada
+            document.getElementById('fase-' + index).classList.add('active');
+            buttons[index].classList.add('active');
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Adicionar funcionalidade de copiar código
+        document.addEventListener('DOMContentLoaded', () => {
+            const codeBlocks = document.querySelectorAll('.code-block');
+            
+            codeBlocks.forEach(block => {
+                const button = document.createElement('button');
+                button.className = 'btn-copy';
+                button.textContent = '📋 Copiar';
+                button.onclick = () => {
+                    const text = block.textContent.replace('💻 Comando / Código\n', '');
+                    navigator.clipboard.writeText(text);
+                    button.textContent = '✅ Copiado!';
+                    setTimeout(() => {
+                        button.textContent = '📋 Copiar';
+                    }, 2000);
+                };
+                block.style.position = 'relative';
+                block.appendChild(button);
+            });
+        });
+    </script>
+</body>
+</html>
